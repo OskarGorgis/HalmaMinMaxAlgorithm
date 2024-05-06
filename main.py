@@ -2,6 +2,7 @@ import Halma
 import Heuristics
 import DecisionTree
 import MinMax
+import time
 
 
 endGameBoard = [
@@ -46,7 +47,15 @@ if __name__ == '__main__':
     game = Halma.Halma()
     game.loadBoard(endGameBoard)
     minMax = MinMax.NormalMinMax(game, 1)
+    start = time.time()
     minMax.playOneGame()
+    end = time.time()
+    print(f"Time of endgame: {end - start}")
 
-
+    game.loadBoard(currBoard)
+    minMax = MinMax.NormalMinMax(game, 1)
+    start = time.time()
+    minMax.playOneGame()
+    end = time.time()
+    print(f"Time of startgame: {end - start}")
 

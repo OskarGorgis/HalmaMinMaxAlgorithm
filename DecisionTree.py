@@ -8,7 +8,7 @@ def oppositePlayer(player):
 
 class DecisionTree:
 
-    def __init__(self, game, player, heuristic):
+    def __init__(self, game, player, heuristic): #TODO przetrzymywanie tylko informacji i położeniu graczy
         self.game = game
         self.player = player
         self.tree = (game, (0, 0, 0), [])
