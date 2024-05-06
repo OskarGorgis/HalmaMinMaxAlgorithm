@@ -1,3 +1,4 @@
+import Halma
 import Heuristics
 import DecisionTree
 
@@ -15,7 +16,10 @@ class NormalMinMax:
         while not hasEnded:
             print(f"Iteration: {iteration}")
             iteration += 1
-            self.decisionTree.makeDecisionTree(4)
+            self.decisionTree.makeDecisionTree(1)
+            print(f"Tree in iteration {iteration}")
+            self.decisionTree.printTree()
+            print(0/0)
             self.makeDecision()
             game = self.movesTable[len(self.movesTable)-1]
             if game.winner != "None":
@@ -46,7 +50,10 @@ class NormalMinMax:
         self.makeDecisionRecursion(node, DecisionTree.oppositePlayer(player))
 
     def printMoves(self):
+        prevGameBoard = Halma.Halma()
         for move, game in enumerate(self.movesTable):
-            print(f"Move nr {move}")
-            game.printBoard()
+            if move != 0:
+                print(f"Move nr {move}")
+                game.printBoardDiff(prevGameBoard)
+            prevGameBoard = game.getBoard()
             print("\n")

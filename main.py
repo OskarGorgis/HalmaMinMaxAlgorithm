@@ -43,7 +43,7 @@ currBoard = [
     [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
-if __name__ == '__main__':
+def playGame():
     game = Halma.Halma()
     game.loadBoard(endGameBoard)
     minMax = MinMax.NormalMinMax(game, 1)
@@ -59,3 +59,8 @@ if __name__ == '__main__':
     end = time.time()
     print(f"Time of startgame: {end - start}")
 
+if __name__ == '__main__':
+    #playGame()
+    game = Halma.Halma()
+    game.loadBoard(endGameBoard)
+    print(game.checkForJumps(11, 0, 1, set()))

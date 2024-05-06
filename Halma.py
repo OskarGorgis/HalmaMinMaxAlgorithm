@@ -1,3 +1,4 @@
+import HalmaAI
 import Heuristics
 
 
@@ -7,31 +8,25 @@ class Halma:
     winner = "None"
 
     def __init__(self):
-        self.board = [[0 for _ in range(16)] for _ in range(16)]
         self.isEnded = False
 
-    def setAll(self, board, player1, player2):
-        self.board = board
+    def setAll(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
 
-    def printBoard(self):
-        for x in self.board:
-            print(x)
-
     def movesOptions(self, piece):
         (pieceX, pieceY) = piece
-        if self.board[pieceX][pieceY] == 0:
+        if piece not in self.player1 and piece not in self.player2:
             print("Sprawdzanie ruchu pustego pola")
             return {"Move": [], "Jump": []}
         possibleMoves = {"Move": [], "Jump": []}
-        pieceType = self.board[pieceX][pieceY]
+        pieceType = 1 if piece in self.player1 else 2
         for x in [pieceX - 1, pieceX, pieceX + 1]:
             for y in [pieceY - 1, pieceY, pieceY + 1]:
                 if 0 <= x < 16 and 0 <= y < 16 and not (pieceX == x and pieceY == y):
-                    if self.board[x][y] == 0:
+                    if (x, y) not in self.player1 and (x, y) not in self.player2:
                         possibleMoves["Move"].append((x, y))
-                    elif self.board[x][y] != pieceType:
+                    elif (1 if (x, y) in self.player1 else 2) != pieceType:
                         possibleMoves["Jump"] = possibleMoves["Jump"] + \
                                                 self.checkForJumps(pieceX, pieceY, pieceType, set())
         return possibleMoves
@@ -42,60 +37,51 @@ class Halma:
         for x in [pieceX - 1, pieceX, pieceX + 1]:
             for y in [pieceY - 1, pieceY, pieceY + 1]:
                 if 0 <= x < 16 and 0 <= y < 16 and not (pieceX == x and pieceY == y):
-                    if self.board[x][y] == enemyPiece:
+                    if (1 if (x, y) in self.player1 else 2) == enemyPiece:
                         newX = x + (x - pieceX)
                         newY = y + (y - pieceY)
-                        if 16 > newX >= 0 == self.board[newX][newY] and 0 <= newY < 16 and (
-                                (newX, newY) not in forbiddenFields):
+                        if (16 > newX >= 0 and 0 <= newY < 16 and (
+                                (newX, newY) not in forbiddenFields) and (newX, newY) not in self.player1
+                                and (newX, newY) not in self.player2):
                             possibleJumps.append((newX, newY))
                             forbiddenFields.add((newX, newY))
+                            return possibleJumps
                             possibleJumps = possibleJumps + self.checkForJumps(newX, newY, pieceType, forbiddenFields)
         return possibleJumps
 
     def movePiece(self, start, end):
-        (xs, ys) = start
-        (xe, ye) = end
-        if self.board[xs][ys] == 0:
+        if start not in self.player1 and start not in self.player2:
             print("Próba ruchu z pustego pola")
-        elif self.board[xe][ye] != 0:
+        elif end in self.player1 or end in self.player2:
             print("Próba ruchu na zajęte pole")
         else:
-            self.board[xe][ye] = self.board[xs][ys]
-            self.board[xs][ys] = 0
-            if self.board[xe][ye] == 1:
-                self.player1.remove((xs, ys))
-                self.player1.append((xe, ye))
-            if self.board[xe][ye] == 2:
-                self.player2.remove((xs, ys))
-                self.player2.append((xe, ye))
+            if start in self.player1:
+                self.player1.remove(start)
+                self.player1.append(end)
+            else:
+                self.player2.remove(start)
+                self.player2.append(end)
 
     def movePieceReturnCopy(self, start, end):
-        (xs, ys) = start
-        (xe, ye) = end
-        if self.board[xs][ys] == 0:
+        if start not in self.player1 and start not in self.player2:
             print("Próba ruchu z pustego pola")
-        elif self.board[xe][ye] != 0:
-            print("Próba ruchu na zajęte pole")
+        elif end in self.player1 or end in self.player2:
+            print(f"Próba ruchu z pola {start} na zajęte pole {end}")
         else:
-            newBoard = list(range(16))
-            for i in range(len(self.board)):
-                newBoard[i] = self.board[i].copy()
             newPlayer1 = self.player1.copy()
             newPlayer2 = self.player2.copy()
-            newBoard[xe][ye] = newBoard[xs][ys]
-            newBoard[xs][ys] = 0
-            if newBoard[xe][ye] == 1:
-                newPlayer1.remove((xs, ys))
-                newPlayer1.append((xe, ye))
-            if newBoard[xe][ye] == 2:
-                newPlayer2.remove((xs, ys))
-                newPlayer2.append((xe, ye))
-            return newBoard, newPlayer1, newPlayer2
+            if start in self.player1:
+                newPlayer1.remove(start)
+                newPlayer1.append(end)
+            else:
+                newPlayer2.remove(start)
+                newPlayer2.append(end)
+            return newPlayer1, newPlayer2
 
     def checkIfEnded(self):
-        if Heuristics.baseHeuristic(False, self.player1) == 570:  # powinno być True
+        if Heuristics.baseHeuristic(self.player1, True) == 570:
             self.winner = "Player 1"
-        elif Heuristics.baseHeuristic(False, self.player2) == 570:
+        elif Heuristics.baseHeuristic(self.player2, False) == 570:
             self.winner = "Player 2"
 
     def loadBoard(self, boardToLoad):
@@ -115,16 +101,33 @@ class Halma:
                             self.player1.append((i, j))
                         elif boardToLoad[i][j] == 2:
                             self.player2.append((i, j))
-                self.board = boardToLoad
-
-    def setBoard(self, board):
-        self.board = board
 
     def getBoard(self):
-        return self.board
+        board = [[0 for _ in range(16)] for _ in range(16)]
+        for (x, y) in self.player1:
+            board[x][y] = 1
+        for (x, y) in self.player2:
+            board[x][y] = 2
+        return board
+
+    def printBoardDiff(self, basicBoard):
+        board = [[0 for _ in range(16)] for _ in range(16)]
+        for (x, y) in self.player1:
+             board[x][y] = 1
+        for (x, y) in self.player2:
+            board[x][y] = 2
+        print()
+        for line in board:
+            print(line)
+        HalmaAI.draw_game_changes(basicBoard, board)
 
     def printBoard(self):
-        for line in self.board:
+        board = [[0 for _ in range(16)] for _ in range(16)]
+        for (x, y) in self.player1:
+             board[x][y] = 1
+        for (x, y) in self.player2:
+            board[x][y] = 2
+        for line in board:
             print(line)
 
     def getPlayer(self, player):

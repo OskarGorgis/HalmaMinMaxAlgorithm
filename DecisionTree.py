@@ -13,11 +13,14 @@ class DecisionTree:
         self.player = player
         self.tree = (game, (0, 0, 0), [])
         self.heuristic = heuristic
+        self.currIteration = 0
 
     def makeDecisionTree(self, iterations):
+        self.currIteration = 0
         self.continueDecisionTree(self.tree, self.player, iterations)
 
     def continueDecisionTree(self, node, player, iterationsLeft):
+
         if iterationsLeft == 0:
             return
         (game, _, everyMovePossible) = node
@@ -33,13 +36,12 @@ class DecisionTree:
 
         for move in everyMoveTemp:
             (piece, destination) = move
-            (board, pl1, pl2) = game.movePieceReturnCopy(piece, destination)
+            (pl1, pl2) = game.movePieceReturnCopy(piece, destination)
             afterMove = Halma.Halma()
-            afterMove.setAll(board, pl1, pl2)
+            afterMove.setAll(pl1, pl2)
             afterMove.checkIfEnded()
-            everyMovePossible.append((afterMove, (self.heuristic(afterMove.board,
-                                                                 True if player == 1 else False,
-                                                                 afterMove.getPlayer(player)), 0, 0), []))
+            everyMovePossible.append((afterMove, (self.heuristic(afterMove.getPlayer(player),
+                                                                 True if player == 1 else False,), 0, 0), []))
 
         iterationsLeft -= 1
 
@@ -54,8 +56,9 @@ class DecisionTree:
         (game, _, children) = node
 
         if game.winner != "None":
-            print(f"\nNode level {level}:")
             print(f"Winner is {game.winner}")
-            game.printBoard()
+        print(f"\nNode level {level}:")
+        game.printBoard()
+
         for child in children:
             self.printNode(child, level + 1) if child else []
