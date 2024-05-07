@@ -37,7 +37,13 @@ class Halma:
         for x in [pieceX - 1, pieceX, pieceX + 1]:
             for y in [pieceY - 1, pieceY, pieceY + 1]:
                 if 0 <= x < 16 and 0 <= y < 16 and not (pieceX == x and pieceY == y):
-                    if (1 if (x, y) in self.player1 else 2) == enemyPiece:
+                    if (x, y) in self.player1:
+                        currPiece = 1
+                    elif (x, y) in self.player2:
+                        currPiece = 2
+                    else:
+                        currPiece = 0
+                    if currPiece == enemyPiece:
                         newX = x + (x - pieceX)
                         newY = y + (y - pieceY)
                         if (16 > newX >= 0 and 0 <= newY < 16 and (
@@ -45,7 +51,6 @@ class Halma:
                                 and (newX, newY) not in self.player2):
                             possibleJumps.append((newX, newY))
                             forbiddenFields.add((newX, newY))
-                            return possibleJumps
                             possibleJumps = possibleJumps + self.checkForJumps(newX, newY, pieceType, forbiddenFields)
         return possibleJumps
 

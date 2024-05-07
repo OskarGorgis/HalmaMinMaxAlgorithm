@@ -1,5 +1,4 @@
-import matplotlib.pyplot as plt
-import numpy as np
+
 
 def draw_game_changes(arr1, arr2):
     if len(arr1) != 16 or len(arr2) != 16 or len(arr1[0]) != 16 or len(arr2[0]) != 16:

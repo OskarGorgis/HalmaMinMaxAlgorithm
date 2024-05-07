@@ -16,10 +16,7 @@ class NormalMinMax:
         while not hasEnded:
             print(f"Iteration: {iteration}")
             iteration += 1
-            self.decisionTree.makeDecisionTree(1)
-            print(f"Tree in iteration {iteration}")
-            self.decisionTree.printTree()
-            print(0/0)
+            self.decisionTree.makeDecisionTree(2)
             self.makeDecision()
             game = self.movesTable[len(self.movesTable)-1]
             if game.winner != "None":
