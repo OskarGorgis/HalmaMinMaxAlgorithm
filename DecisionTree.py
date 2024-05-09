@@ -8,10 +8,10 @@ def oppositePlayer(player):
 
 class DecisionTree:
 
-    def __init__(self, game, player, heuristic): #TODO przetrzymywanie tylko informacji i położeniu graczy
+    def __init__(self, game, player, heuristic):
         self.game = game
         self.player = player
-        self.tree = (game, (0, 0, 0), [])
+        self.tree = (game, 0, [-float('inf'), float('inf')], [])
         self.heuristic = heuristic
         self.currIteration = 0
 
@@ -23,7 +23,7 @@ class DecisionTree:
 
         if iterationsLeft == 0:
             return
-        (game, _, everyMovePossible) = node
+        (game, _, _, everyMovePossible) = node
         if game.winner != "None":
             return
         everyMoveTemp = []
@@ -40,8 +40,9 @@ class DecisionTree:
             afterMove = Halma.Halma()
             afterMove.setAll(pl1, pl2)
             afterMove.checkIfEnded()
-            everyMovePossible.append((afterMove, (self.heuristic(afterMove.getPlayer(player),
-                                                                 True if player == 1 else False,), 0, 0), []))
+            everyMovePossible.append((afterMove, self.heuristic(afterMove.getPlayer(player),
+                                                                 True if player == 1 else False,),
+                                                  [-float('inf'), float('inf')], []))
 
         iterationsLeft -= 1
 
@@ -53,7 +54,7 @@ class DecisionTree:
         self.printNode(self.tree, 0)
 
     def printNode(self, node, level):
-        (game, _, children) = node
+        (game, _, _, children) = node
 
         if game.winner != "None":
             print(f"Winner is {game.winner}")

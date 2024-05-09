@@ -44,17 +44,20 @@ currBoard = [
 ]
 
 
-def playGame():
+def playEndGame():
     game = Halma.Halma()
     game.loadBoard(endGameBoard)
-    minMax = MinMax.NormalMinMax(game, 1)
+    minMax = MinMax.NormalMinMax(game, 1, Heuristics.distanceHeuristic)
     start = time.time()
     minMax.playOneGame()
     end = time.time()
     print(f"Time of endgame: {end - start}")
 
+
+def playNormalGame():
+    game = Halma.Halma()
     game.loadBoard(currBoard)
-    minMax = MinMax.NormalMinMax(game, 1)
+    minMax = MinMax.NormalMinMax(game, 1, Heuristics.mixHeuristic)
     start = time.time()
     minMax.playOneGame()
     end = time.time()
@@ -62,4 +65,5 @@ def playGame():
 
 
 if __name__ == '__main__':
-    playGame()
+    #playNormalGame()
+    playEndGame()
