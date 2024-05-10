@@ -78,13 +78,15 @@ class AlfaBetaMinMax:
             if game.winner != "None":
                 hasEnded = True
                 winner = game.winner
-            self.decisionTree.tree = (game, (0, -float('inf'), float('inf')), [])
+            self.decisionTree.tree = (game, 0, [float('-inf'), float('inf')], [])
+            if iteration == 100:
+                break
         self.printMoves()
         print(f"{winner} has won!")
 
     def makeDecision(self):
         self.makeDecisionRecursion(self.decisionTree.tree, self.decisionTree.player)
-        # self.printMoves()
+        # trzeba przejrzeć całe drzewo jeszcze raz od korzenia (przy tworzeniu trybu dla dwóch graczy będzie łatwiej bo tylko do analizy najwyższe piętro jako następny ruch)
 
     def makeDecisionRecursion(self, node, player):
         (game, heuristic, alfabeta, children) = node
@@ -93,19 +95,21 @@ class AlfaBetaMinMax:
         if game.winner != "None" or children == []:
             return heuristic
         if player == self.decisionTree.player:  # max here
+            maxValue = float('-inf')
             for child in children:
                 value = self.makeDecisionRecursion(child, DecisionTree.oppositePlayer(player))
-                if value > alfabeta[0]:
-                    alfabeta[0] = value
+                maxValue = max(value, maxValue)
                 if alfabeta[1] <= alfabeta[0]:
-                    return alfabeta[0]
+                    break
+            return maxValue
         else:                                   # min here
+            minValue = float('inf')
             for child in children:
                 value = self.makeDecisionRecursion(child, DecisionTree.oppositePlayer(player))
-                if value < alfabeta[1]:
-                    alfabeta[1] = value
+                minValue = min(minValue, value)
                 if alfabeta[1] <= alfabeta[0]:
-                    return alfabeta[1]
+                    break
+            return minValue
 
 
 
@@ -116,8 +120,6 @@ class AlfaBetaMinMax:
         for move, game in enumerate(self.movesTable):
             if move != 0:
                 print(f"Move nr {move}")
-                print(f"Player 1 pieces: {len(game.player1)}")
-                print(f"Player 2 pieces: {len(game.player2)}")
                 game.printBoardDiff(prevGameBoard)
             prevGameBoard = game.getBoard()
             print("\n")

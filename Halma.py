@@ -84,9 +84,9 @@ class Halma:
             return newPlayer1, newPlayer2
 
     def checkIfEnded(self):
-        if Heuristics.baseHeuristic(self.player1, True) == 570:
+        if Heuristics.didWin(self.player1, True) == 570:
             self.winner = "Player 1"
-        elif Heuristics.baseHeuristic(self.player2, False) == 570:
+        elif Heuristics.didWin(self.player2, False) == 570:
             self.winner = "Player 2"
 
     def loadBoard(self, boardToLoad):

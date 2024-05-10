@@ -11,7 +11,7 @@ class DecisionTree:
     def __init__(self, game, player, heuristic):
         self.game = game
         self.player = player
-        self.tree = (game, 0, [-float('inf'), float('inf')], [])
+        self.tree = (game, 0, [float('-inf'), float('inf')], [])
         self.heuristic = heuristic
         self.currIteration = 0
 
@@ -40,9 +40,9 @@ class DecisionTree:
             afterMove = Halma.Halma()
             afterMove.setAll(pl1, pl2)
             afterMove.checkIfEnded()
-            everyMovePossible.append((afterMove, self.heuristic(afterMove.getPlayer(player),
-                                                                 True if player == 1 else False,),
-                                                  [-float('inf'), float('inf')], []))
+            everyMovePossible.append((afterMove, self.heuristic(afterMove.player1,
+                                                                 afterMove.player2),
+                                                  [float('-inf'), float('inf')], []))
 
         iterationsLeft -= 1
 
