@@ -1,6 +1,5 @@
 import Halma
 import Heuristics
-import DecisionTree
 import MinMax
 import time
 
@@ -46,8 +45,8 @@ currBoard = [
 
 def playEndGame():
     game = Halma.Halma()
-    game.loadBoard(currBoard)
-    minMax = MinMax.AlfaBetaMinMax(game, 1, Heuristics.distanceHeuristic)
+    game.loadBoard(endGameBoard)
+    minMax = MinMax.NormalMinMax(game, 1, Heuristics.distanceHeuristic)
     start = time.time()
     minMax.playOneGame()
     end = time.time()
@@ -57,7 +56,7 @@ def playEndGame():
 def playNormalGame():
     game = Halma.Halma()
     game.loadBoard(currBoard)
-    minMax = MinMax.NormalMinMax(game, 1, Heuristics.mixHeuristic)
+    minMax = MinMax.AlfaBetaMinMax(game, 1, Heuristics.distanceHeuristic)
     start = time.time()
     minMax.playOneGame()
     end = time.time()

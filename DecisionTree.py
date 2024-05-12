@@ -1,5 +1,4 @@
 import Halma
-import Heuristics
 
 
 def oppositePlayer(player):

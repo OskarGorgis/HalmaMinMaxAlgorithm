@@ -1,4 +1,3 @@
-import HalmaAI
 import Heuristics
 
 
@@ -124,7 +123,6 @@ class Halma:
         print()
         for line in board:
             print(line)
-        HalmaAI.draw_game_changes(basicBoard, board)
 
     def printBoard(self):
         board = [['_' for _ in range(16)] for _ in range(16)]

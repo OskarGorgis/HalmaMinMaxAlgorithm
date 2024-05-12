@@ -1,5 +1,4 @@
 import Halma
-import Heuristics
 import DecisionTree
 
 
@@ -16,13 +15,15 @@ class NormalMinMax:
         while not hasEnded:
             print(f"Iteration: {iteration}")
             iteration += 1
+            if iteration == 200:
+                break
             self.decisionTree.makeDecisionTree(2)
             self.makeDecision()
             game = self.movesTable[len(self.movesTable)-1]
             if game.winner != "None":
                 hasEnded = True
                 winner = game.winner
-            self.decisionTree.tree = (game, (0, 0, 0), [])
+            self.decisionTree.tree = (game, 0, [0, 0], [])
         self.printMoves()
         print(f"{winner} has won!")
 
@@ -37,25 +38,29 @@ class NormalMinMax:
         if game.winner != "None" or children == []:
             return
 
-        node = children[0]
-        maxValue = 0
-        for child in children:
-            (_, heuristic2, _, children) = child
-            if heuristic2 > maxValue:
-                node = child
-                maxValue = heuristic2
+        node = None
+
+        if player == 1:
+            maxValue = float('-inf')
+            for child in children:
+                (_, heuristic2, _, children) = child
+                if heuristic2 > maxValue:
+                    node = child
+                    maxValue = heuristic2
+        else:
+            minValue = float('inf')
+            for child in children:
+                (_, heuristic2, _, children) = child
+                if heuristic2 < minValue:
+                    node = child
+                    minValue = heuristic2
 
         self.makeDecisionRecursion(node, DecisionTree.oppositePlayer(player))
 
     def printMoves(self):
-        prevGameBoard = Halma.Halma()
         for move, game in enumerate(self.movesTable):
-            if move != 0:
-                print(f"Move nr {move}")
-                print(f"Player 1 pieces: {len(game.player1)}")
-                print(f"Player 2 pieces: {len(game.player2)}")
-                game.printBoardDiff(prevGameBoard)
-            prevGameBoard = game.getBoard()
+            print(f"Move nr {move}")
+            game.printBoard()
             print("\n")
 
 
@@ -72,7 +77,7 @@ class AlfaBetaMinMax:
         while not hasEnded:
             print(f"Iteration: {iteration}")
             iteration += 1
-            if iteration == 200:
+            if iteration == 300:
                 break
             self.decisionTree.makeDecisionTree(2)
             self.makeDecision()
