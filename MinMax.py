@@ -72,6 +72,8 @@ class AlfaBetaMinMax:
         while not hasEnded:
             print(f"Iteration: {iteration}")
             iteration += 1
+            if iteration == 200:
+                break
             self.decisionTree.makeDecisionTree(2)
             self.makeDecision()
             game = self.movesTable[len(self.movesTable)-1]
@@ -79,47 +81,52 @@ class AlfaBetaMinMax:
                 hasEnded = True
                 winner = game.winner
             self.decisionTree.tree = (game, 0, [float('-inf'), float('inf')], [])
-            if iteration == 100:
-                break
         self.printMoves()
         print(f"{winner} has won!")
 
     def makeDecision(self):
         self.makeDecisionRecursion(self.decisionTree.tree, self.decisionTree.player)
-        # trzeba przejrzeć całe drzewo jeszcze raz od korzenia (przy tworzeniu trybu dla dwóch graczy będzie łatwiej bo tylko do analizy najwyższe piętro jako następny ruch)
+        (game, _, _, chldrn) = self.decisionTree.tree
+        children = chldrn
+        #self.movesTable.append(game)
+        while children != []:
+            (game, _, _, chldrn2) = children[0]
+            self.movesTable.append(game)
+            children = chldrn2
+        #(game, _, _, chldrn2) = children[0]
+        #self.movesTable.append(game)
 
     def makeDecisionRecursion(self, node, player):
         (game, heuristic, alfabeta, children) = node
-        if node != self.decisionTree.tree:
-            self.movesTable.append(game)
         if game.winner != "None" or children == []:
             return heuristic
         if player == self.decisionTree.player:  # max here
             maxValue = float('-inf')
+            maxNode = None
             for child in children:
                 value = self.makeDecisionRecursion(child, DecisionTree.oppositePlayer(player))
-                maxValue = max(value, maxValue)
+                if value > maxValue:
+                    maxValue = value
+                    maxNode = child
                 if alfabeta[1] <= alfabeta[0]:
                     break
+            children[0] = maxNode
             return maxValue
         else:                                   # min here
             minValue = float('inf')
+            minNode = None
             for child in children:
                 value = self.makeDecisionRecursion(child, DecisionTree.oppositePlayer(player))
-                minValue = min(minValue, value)
+                if value < minValue:
+                    minValue = value
+                    minNode = child
                 if alfabeta[1] <= alfabeta[0]:
                     break
+            children[0] = minNode
             return minValue
 
-
-
-
-
     def printMoves(self):
-        prevGameBoard = Halma.Halma()
         for move, game in enumerate(self.movesTable):
-            if move != 0:
-                print(f"Move nr {move}")
-                game.printBoardDiff(prevGameBoard)
-            prevGameBoard = game.getBoard()
+            print(f"Move nr {move}")
+            game.printBoard()
             print("\n")

@@ -84,9 +84,9 @@ class Halma:
             return newPlayer1, newPlayer2
 
     def checkIfEnded(self):
-        if Heuristics.didWin(self.player1, True) == 570:
+        if Heuristics.didWin(self.player1, True):
             self.winner = "Player 1"
-        elif Heuristics.didWin(self.player2, False) == 570:
+        elif Heuristics.didWin(self.player2, False):
             self.winner = "Player 2"
 
     def loadBoard(self, boardToLoad):
@@ -127,11 +127,11 @@ class Halma:
         HalmaAI.draw_game_changes(basicBoard, board)
 
     def printBoard(self):
-        board = [[0 for _ in range(16)] for _ in range(16)]
+        board = [['_' for _ in range(16)] for _ in range(16)]
         for (x, y) in self.player1:
-             board[x][y] = 1
+             board[x][y] = '1'
         for (x, y) in self.player2:
-            board[x][y] = 2
+            board[x][y] = '2'
         for line in board:
             print(line)
 

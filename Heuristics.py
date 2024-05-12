@@ -1,21 +1,25 @@
 def didWin(playerPieces, rightTopCorner):
     value = 0
     if rightTopCorner:
-        x, y = 0, 15
+        base = {(0, 11), (0, 12), (0, 13), (0, 14), (0, 15), (1, 11), (1, 12), (1, 13), (1, 14), (1, 15), (2, 12),
+                (2, 13), (2, 14), (2, 15), (3, 13), (3, 14), (3, 15), (4, 14), (4, 15)}
     else:
-        x, y = 15, 0
-    for (i, j) in playerPieces:
-        value += abs(i-x) + abs(j-y)
-    return 510 - value
+        base = {(15, 0), (15, 1), (15, 2), (15, 3), (15, 4), (14, 0), (14, 1), (14, 2), (14, 3), (14, 4), (13, 0),
+                     (13, 1), (13, 2), (13, 3), (12, 0), (12, 1), (12, 2), (11, 0), (11, 1)}
+    for piece in playerPieces:
+        if piece in base:
+            value += 1
+    return value == 19
+
 
 def distanceHeuristic(playerPieces, enemyPieces):
     value = 0
     x, y = 0, 15
     ex, ey = 15, 0
     for (i, j) in playerPieces:
-        value += abs(i-x) + abs(j-y)
+        value -= abs(i-x) + abs(j-y)
     for (i, j) in enemyPieces:
-        value -= abs(i-ex) + abs(j-ey)
+        value += abs(i-ex) + abs(j-ey)
     return value
 
 def baseHeuristic(playerPieces, enemyPieces):
